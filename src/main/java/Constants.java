@@ -1,5 +1,6 @@
 public class Constants {
     public static final String PATH_TO_DATA_FILE = "src/main/resources/titanic.csv";
+    public static final String PATH_TO_FILTERED_FILE = "C:\\Users\\User\\Downloads\\";
 
     public static final int WINDOW_WIDTH = 600;
     public static final int WINDOW_HEIGHT = 700;

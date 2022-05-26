@@ -14,6 +14,7 @@ public class Passenger {
     private char embarked;
 
 
+
     public Passenger (String text) {
         String[] dataItem = text.split(",");
 
@@ -47,20 +48,19 @@ public class Passenger {
 
 
     public String toString() {
-        return "Passenger{" +
-                "passengerId=" + passengerId +
-                ", survived=" + survived +
-                ", pClass=" + pClass +
-                ", name='" + name + '\'' +
-                ", sex='" + sex + '\'' +
-                ", age=" + age +
-                ", sibSp=" + sibSp +
-                ", parch=" + parch +
-                ", ticket='" + ticket + '\'' +
-                ", fare=" + fare +
-                ", cabin='" + cabin + '\'' +
-                ", embarked=" + embarked +
-                '}'+ '\n';
+        return
+                + passengerId +
+                "," + (survived ? "1" : "0") +
+                "," + pClass +
+                "," + getFormattedName()+
+                "," + sex +
+                "," + ((age == -1) ? "":age)  +
+                "," + sibSp +
+                "," + parch +
+                "," + ticket +
+                "," + fare +
+                "," + cabin+
+                "," + embarked + "\n";
     }
 
     public boolean isIdInRange (int min,int max) {

@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -29,16 +32,21 @@ public class MainPanel extends JPanel {
     private int classType;
     private String sexChoice;
     private char embarkedChoice;
+    private int filterCounter;
+    private String firstLine;
+    private int x;
 
 
     public MainPanel(int x, int y, int width, int height) {
         File file = new File(Constants.PATH_TO_DATA_FILE); //this is the path to the data file
         this.setLayout(null);
         this.setBounds(x, y + Constants.MARGIN_FROM_TOP, width, height);
+        this.filterCounter = 0;
 
         createPassengerList(file);
+        this.x = x + Constants.MARGIN_FROM_LEFT;
 
-        createFilters(x + Constants.MARGIN_FROM_LEFT, y);
+        createFilters(y);
 
         filtering ();
     }
@@ -50,7 +58,7 @@ public class MainPanel extends JPanel {
             if (file.exists()) {
                 Scanner scanner = new Scanner(file);
 
-                scanner.nextLine();
+                this.firstLine = scanner.nextLine();
                 while (scanner.hasNextLine()) {
                     lineData = scanner.nextLine();
                     Passenger passenger = new Passenger(lineData);
@@ -62,9 +70,9 @@ public class MainPanel extends JPanel {
         }
     }
 
-    private void createFilters(int x, int y) {
+    private void createFilters(int y) {
         JLabel idMinLabel = new JLabel("Min passenger Id: ");
-        idMinLabel.setBounds(x , y, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        idMinLabel.setBounds(this.x , y, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(idMinLabel);
 
         this.idMinTextField = new JTextField();
@@ -80,7 +88,7 @@ public class MainPanel extends JPanel {
 //        this.add(this.idMaxTextField);
 
         JLabel idMaxLabel = new JLabel("Max passenger Id: ");
-        idMaxLabel.setBounds(x , y + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        idMaxLabel.setBounds(this.x , y + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(idMaxLabel);
 
 
@@ -88,23 +96,23 @@ public class MainPanel extends JPanel {
         this.idMaxTextField.setBounds(idMaxLabel.getX() + Constants.LABEL_WIDTH, this.idMinTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.TEXT_FIELD_WIDTH, Constants.TEXT_FIELD_HEIGHT);
         this.add(this.idMaxTextField);
 
-        createPClassFilter(x);
-        createNameFilter(x);
-        createSexFilter(x);
-        createSibSpFilter(x);
-        createParchFilter (x);
-        createTicketFilter (x);
-        createFareFilter (x);
-        createCabinFilter(x);
-        createEmbarkedFilter(x);
+        createPClassFilter();
+        createNameFilter();
+        createSexFilter();
+        createSibSpFilter();
+        createParchFilter ();
+        createTicketFilter ();
+        createFareFilter ();
+        createCabinFilter();
+        createEmbarkedFilter();
 
-        createFilterButton(x);
-        createStatisticsButton(x);
+        createFilterButton();
+        createStatisticsButton();
     }
 
-    private void createPClassFilter(int x) {
+    private void createPClassFilter() {
         JLabel pClassLabel = new JLabel("Passenger class: ");
-        pClassLabel.setBounds(x, this.idMaxTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        pClassLabel.setBounds(this.x, this.idMaxTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(pClassLabel);
 
         this.pClassComboBox = new JComboBox<>(Constants.PASSENGER_CLASS_OPTIONS);
@@ -115,9 +123,9 @@ public class MainPanel extends JPanel {
         });
     }
 
-    private void createNameFilter (int x){
+    private void createNameFilter (){
         JLabel nameLabel = new JLabel("Passenger name: ");
-        nameLabel.setBounds(x , this.pClassComboBox.getY() + Constants.COMBO_BOX_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        nameLabel.setBounds(this.x , this.pClassComboBox.getY() + Constants.COMBO_BOX_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(nameLabel);
 
         this.nameTextField = new JTextField();
@@ -125,9 +133,9 @@ public class MainPanel extends JPanel {
         this.add(this.nameTextField);
     }
 
-    private void createSexFilter (int x){
+    private void createSexFilter (){
         JLabel sexLabel = new JLabel("Passenger sex: ");
-        sexLabel.setBounds(x , this.nameTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        sexLabel.setBounds(this.x , this.nameTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(sexLabel);
 
         this.sexComboBox = new JComboBox<>(Constants.PASSENGER_SEX_OPTIONS);
@@ -140,9 +148,9 @@ public class MainPanel extends JPanel {
         });
     }
 
-    private void createSibSpFilter (int x){
+    private void createSibSpFilter (){
         JLabel sibSpLabel = new JLabel("Passenger number of siblings: ");
-        sibSpLabel.setBounds(x,this.sexComboBox.getY() + Constants.COMBO_BOX_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        sibSpLabel.setBounds(this.x,this.sexComboBox.getY() + Constants.COMBO_BOX_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(sibSpLabel);
 
         this.sibSpTextField = new JTextField();
@@ -150,9 +158,9 @@ public class MainPanel extends JPanel {
         this.add(this.sibSpTextField);
     }
 
-    private void createParchFilter (int x){
+    private void createParchFilter (){
         JLabel parchLabel = new JLabel("Passenger number of children / parents: ");
-        parchLabel.setBounds(x,this.sibSpTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        parchLabel.setBounds(this.x,this.sibSpTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(parchLabel);
 
         this.parchTextField = new JTextField();
@@ -160,9 +168,9 @@ public class MainPanel extends JPanel {
         this.add(this.parchTextField);
     }
 
-    private void createTicketFilter (int x){
+    private void createTicketFilter (){
         JLabel ticketLabel = new JLabel("Passenger number of ticket: ");
-        ticketLabel.setBounds(x,this.parchTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        ticketLabel.setBounds(this.x,this.parchTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(ticketLabel);
 
         this.ticketTextField = new JTextField();
@@ -170,9 +178,9 @@ public class MainPanel extends JPanel {
         this.add(this.ticketTextField);
     }
 
-    private void createFareFilter (int x){
+    private void createFareFilter (){
         JLabel fareMinLabel = new JLabel("Min passenger ticket fare: ");
-        fareMinLabel.setBounds(x, this.ticketTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        fareMinLabel.setBounds(this.x, this.ticketTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(fareMinLabel);
 
         this.fareMinTextField = new JTextField();
@@ -180,7 +188,7 @@ public class MainPanel extends JPanel {
         this.add(this.fareMinTextField);
 
         JLabel fareMaxLabel = new JLabel("Max passenger ticket fare: ");
-        fareMaxLabel.setBounds(x, this.fareMinTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        fareMaxLabel.setBounds(this.x, this.fareMinTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(fareMaxLabel);
 
         this.fareMaxTextField = new JTextField();
@@ -188,9 +196,9 @@ public class MainPanel extends JPanel {
         this.add(this.fareMaxTextField);
     }
 
-    private void createCabinFilter (int x){
+    private void createCabinFilter (){
         JLabel cabinLabel = new JLabel("Passenger cabin number: ");
-        cabinLabel.setBounds(x, this.fareMaxTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        cabinLabel.setBounds(this.x, this.fareMaxTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(cabinLabel);
 
         this.cabinTextField = new JTextField();
@@ -198,9 +206,9 @@ public class MainPanel extends JPanel {
         this.add(this.cabinTextField);
     }
 
-    private void createEmbarkedFilter (int x){
+    private void createEmbarkedFilter (){
         JLabel embarkedLabel = new JLabel("Passenger embarked: ");
-        embarkedLabel.setBounds(x, this.cabinTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
+        embarkedLabel.setBounds(this.x, this.cabinTextField.getY() + Constants.LABEL_HEIGHT + Constants.SPACE, Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
         this.add(embarkedLabel);
 
         this.embarkedComboBox = new JComboBox<>(Constants.PASSENGER_EMBARKED_OPTIONS);
@@ -213,13 +221,13 @@ public class MainPanel extends JPanel {
         });
     }
 
-    private void createFilterButton(int x){
+    private void createFilterButton(){
         this.filterButton = new JButton("Filter");
-        this.filterButton.setBounds(x, Constants.WINDOW_HEIGHT - 2*(Constants.MARGIN_FROM_TOP + Constants.BUTTON_HEIGHT) , Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
+        this.filterButton.setBounds(this.x, Constants.WINDOW_HEIGHT - 2*(Constants.MARGIN_FROM_TOP + Constants.BUTTON_HEIGHT) , Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT);
         this.add(this.filterButton);
     }
 
-    private void createStatisticsButton (int x){
+    private void createStatisticsButton (){
         this.statisticsButton = new JButton("Statistics");
         this.statisticsButton.setBounds(Constants. WINDOW_WIDTH - (Constants.BUTTON_WIDTH + Constants.MARGIN_FROM_LEFT + 2*Constants.SPACE), this.filterButton.getY() , Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT );
         this.add(this.statisticsButton);
@@ -249,9 +257,33 @@ public class MainPanel extends JPanel {
                     .filter(passenger -> passenger.isNameCorrect(this.nameTextField.getText()))
                     .filter(passenger -> passenger.isSameClass(this.classType))
                     .filter(passenger -> passenger.isSameSex(this.sexChoice))
+                    .sorted(Comparator.comparing(Passenger::getFormattedName))
                     .collect(Collectors.toList());
             System.out.println(filteredList);
 
+            this.filterCounter++;
+
+            String filteredPassengers = this.firstLine + "\n";
+
+            for (Passenger passenger: filteredList) {
+                filteredPassengers += passenger.toString();
+
+            }
+
+            writeToFile( filteredPassengers,Constants.PATH_TO_FILTERED_FILE + this.filterCounter + ".csv");
+
         });
+
+    }
+
+    private void writeToFile (String text , String path){
+        try {
+            FileWriter writer = new FileWriter(path);
+            writer.write(text);
+            writer.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
 }
